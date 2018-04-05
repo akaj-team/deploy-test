@@ -51,6 +51,7 @@ group :development, :test do
   gem 'circleci-bundle-update-pr'   # Create GitHub PullRequest of bundle update in CircleCI
   gem 'bundle_outdated_formatter'   # Formatter for `bundle outdated`
   gem 'rubocop-checkstyle_formatter'
+  gem 'danger-checkstyle_format'
 
  ### Lint ###
   gem 'rubocop'              # Automatic Ruby code style checking tool.

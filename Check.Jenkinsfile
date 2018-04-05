@@ -1,11 +1,35 @@
 pipeline {
     agent any
     stages {
-        stage('Check') {
+        stage('Build & Test') {
             steps {
-                sh 'echo $PATH'
-                sh 'bundle install'
-                sh 'bundle exec rubocop --require rubocop/formatter/checkstyle_formatter --format RuboCop::Formatter::CheckstyleFormatter --no-color --rails --out tmp/rubocop-checkstyle.xml'
+                sh 'env'
+                sh 'rm -f env.list'
+                sh 'env | grep "GIT\\|NODE_\\|STAGE\\|BUILD\\|JOB_NAME\\|ghprbPullId\\|CHANGE_ID" > env.list'
+                sh 'cat env.list'
+                sh 'make check'
+            }
+        }
+        stage('Deploy to Stg'){
+            steps {
+                sh 'make build'
+                echo 'Deploy to Stg.'
+            }
+        }
+        stage('Run UI test'){
+            steps {
+                echo 'Deploy UI test.'
+            }
+        }
+        stage('Deploy to Prod'){
+            steps {
+                echo 'Deploy to Prod.'
+                slackSend color: 'good', message: 'successfully deployed to staging(<http://172.16.110.134:8082|stg.ruby-test.com>)'
+            }
+        }
+        stage('Run smoke test'){
+            steps {
+                echo 'Run smoke test.'
             }
         }
      }
@@ -13,7 +37,6 @@ pipeline {
     post {
         always {
             echo 'Report to github.'
-            sh 'bundle exec danger'
         }
         success {
             echo 'build is success!!!'
