@@ -12,6 +12,7 @@ pipeline {
         }
         stage('Deploy to Stg'){
             steps {
+                sh 'docker ps -a -q --filter ancestor=test/ruby-env --format="{{.ID}}" | xargs docker stop || true'
                 sh 'make build'
                 echo 'Deploy to Stg.'
             }
